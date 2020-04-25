@@ -1,0 +1,16 @@
+# Basic build settings
+build --jobs 128
+build --define='absl=1'
+build --cxxopt='-std=c++14'
+build --copt='-Wno-sign-compare'
+build --copt='-Wno-unused-function'
+build --copt='-Wno-uninitialized'
+build --copt='-Wno-unused-result'
+build --copt='-Wno-comment'
+build --copt='-Wno-return-type'
+build --copt='-Wno-unused-local-typedefs'
+build --copt='-Wno-ignored-attributes'
+
+# Tensorflow needs remote repo
+build --experimental_repo_remote_exec
+
