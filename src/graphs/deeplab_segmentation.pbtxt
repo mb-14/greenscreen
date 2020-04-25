@@ -1,0 +1,51 @@
+input_stream: "input_video"
+input_stream: "background_image"
+output_stream: "output_video"
+
+node {
+  calculator: "FlowLimiterCalculator"
+  input_stream: "input_video"
+  input_stream: "FINISHED:mask"
+  input_stream_info: {
+    tag_index: "FINISHED"
+    back_edge: true
+  }
+  output_stream: "throttled_input_video"
+}
+
+node {
+  calculator: "TfLiteConverterCalculator"
+  input_stream: "IMAGE_GPU:throttled_input_video"
+  output_stream: "TENSORS_GPU:image_tensor"
+}
+
+node {
+  calculator: "TfLiteInferenceCalculator"
+  input_stream: "TENSORS_GPU:image_tensor"
+  output_stream: "TENSORS_GPU:segmentation_tensor"
+  node_options: {
+    [type.googleapis.com/mediapipe.TfLiteInferenceCalculatorOptions] {
+      model_path: "models/deeplabv3.tflite"
+      use_gpu: true
+    }
+  }
+}
+
+node {
+  calculator: "DeeplabTensorsToSegmentationCalculator"
+  input_stream: "TENSORS_GPU:segmentation_tensor"
+  output_stream: "OUTPUT_GPU:mask"
+}
+
+node {
+  calculator: "MaskOverlayCalculator"
+  input_stream: "VIDEO:1:throttled_input_video"
+  input_stream: "VIDEO:0:background_image"
+  input_stream: "MASK:mask"
+  output_stream: "OUTPUT:output_video"
+  node_options: {
+    [type.googleapis.com/mediapipe.MaskOverlayCalculatorOptions] {
+      mask_channel: ALPHA
+    }
+  }
+}
