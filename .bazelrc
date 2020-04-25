@@ -10,7 +10,9 @@ build --copt='-Wno-comment'
 build --copt='-Wno-return-type'
 build --copt='-Wno-unused-local-typedefs'
 build --copt='-Wno-ignored-attributes'
+build --copt='-DMESA_EGL_NO_X11_HEADERS' 
+build --copt='-DEGL_NO_X11'
 
 # Tensorflow needs remote repo
 build --experimental_repo_remote_exec
-
+build --noexperimental_convenience_symlinks
