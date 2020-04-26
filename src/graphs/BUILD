@@ -31,8 +31,9 @@ cc_library(
         "//mediapipe/calculators/image:opencv_encoded_image_to_image_frame_calculator",
         "//src/calculators:deeplab_tensors_to_segmentation_calculator",
         "//mediapipe/gpu:image_frame_to_gpu_buffer_calculator",
-        "//mediapipe/calculators/core:side_packet_to_stream_calculator",
+        "//mediapipe/calculators/core:packet_cloner_calculator",
         "//mediapipe/calculators/util:local_file_contents_calculator",
+        "//mediapipe/calculators/util:packet_frequency_calculator",
         "//mediapipe/gpu:gl_calculator_helper",
     ],
 )

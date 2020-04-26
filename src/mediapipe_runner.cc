@@ -29,10 +29,11 @@
 #include "mediapipe/gpu/gl_calculator_helper.h"
 #include "mediapipe/gpu/gpu_buffer.h"
 #include "mediapipe/gpu/gpu_shared_data_internal.h"
+#include <chrono> // for high_resolution_clock
 
 constexpr char kInputStream[] = "input_video";
 constexpr char kOutputStream[] = "output_video";
-
+using elapsed_resolution = std::chrono::milliseconds;
 DEFINE_string(
     calculator_graph_config_file, "",
     "Name of file containing text format CalculatorGraphConfig proto.");
@@ -91,6 +92,7 @@ DEFINE_string(output_device, "/dev/video4", "V4L2 device to which the output wil
         mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
     cv::Mat background_frame_mat = mediapipe::formats::MatView(background_frame.get());
     background.copyTo(background_frame_mat);
+    std::chrono::high_resolution_clock clock;
     while (grab_frames)
     {
 
@@ -100,6 +102,7 @@ DEFINE_string(output_device, "/dev/video4", "V4L2 device to which the output wil
         if (camera_frame_raw.empty())
             break; // End of video.
 
+        auto preprocessing_time_begin = clock.now();
         cv::Mat camera_frame;
         cv::cvtColor(camera_frame_raw, camera_frame, cv::COLOR_BGR2RGB);
         cv::resize(camera_frame, camera_frame, cv::Size(257, 257));
@@ -112,6 +115,9 @@ DEFINE_string(output_device, "/dev/video4", "V4L2 device to which the output wil
             mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
         cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
         camera_frame.copyTo(input_frame_mat);
+        auto preprocessing_time = std::chrono::duration_cast<elapsed_resolution>(clock.now() - preprocessing_time_begin);
+
+        auto graph_time_begin = clock.now();
         // Send image packet into the graph.
         size_t frame_timestamp_us =
             (double)cv::getTickCount() / (double)cv::getTickFrequency() * 1e6;
@@ -156,6 +162,10 @@ DEFINE_string(output_device, "/dev/video4", "V4L2 device to which the output wil
                 texture.Release();
                 return ::mediapipe::OkStatus();
             }));
+
+        auto graph_time = std::chrono::duration_cast<elapsed_resolution>(clock.now() - graph_time_begin);
+
+        auto postprocessing_being = clock.now();
         // Convert back to opencv for display or saving.
         cv::Mat output_frame_mat = mediapipe::formats::MatView(output_frame.get());
         cv::resize(output_frame_mat, output_frame_mat, cv::Size(640, 480));
@@ -164,12 +174,17 @@ DEFINE_string(output_device, "/dev/video4", "V4L2 device to which the output wil
         uchar *buffer = output_frame_mat.isContinuous() ? output_frame_mat.data : output_frame_mat.clone().data;
         uint buffer_size = output_frame_mat.total() * output_frame_mat.channels();
         size_t nb = video_output->write((char *)buffer, buffer_size);
+        auto postprocessing_time = std::chrono::duration_cast<elapsed_resolution>(clock.now() - postprocessing_being);
         frameCounter++;
         std::time_t timeNow = std::time(0) - timeBegin;
         if (timeNow - tick >= 1)
         {
             tick++;
             LOG(INFO) << "FPS: " << frameCounter;
+            LOG(INFO) << "Preprocessing: " << preprocessing_time.count();
+            LOG(INFO) << "Graph: " << graph_time.count();
+            LOG(INFO) << "Postprocessing: " << postprocessing_time.count();
+
             frameCounter = 0;
         }
         // Press any key to exit.
