@@ -105,7 +105,6 @@ DEFINE_string(output_device, "/dev/video4", "V4L2 device to which the output wil
         auto preprocessing_time_begin = clock.now();
         cv::Mat camera_frame;
         cv::cvtColor(camera_frame_raw, camera_frame, cv::COLOR_BGR2RGB);
-        cv::resize(camera_frame, camera_frame, cv::Size(257, 257));
 
         cv::flip(camera_frame, camera_frame, /*flipcode=HORIZONTAL*/ 1);
 

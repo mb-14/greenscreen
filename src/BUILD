@@ -14,6 +14,7 @@ cc_binary(
         "//mediapipe/framework/port:opencv_video",
         "@usr_local//:libv4l2cpp",
         "//src/graphs:deeplab_segmentation",
+        "//src/graphs:slimnet_segmentation",
         "//mediapipe/gpu:gpu_buffer",
         "//mediapipe/gpu:gpu_shared_data_internal",
     ],

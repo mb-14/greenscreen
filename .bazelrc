@@ -15,4 +15,4 @@ build --copt='-DEGL_NO_X11'
 
 # Tensorflow needs remote repo
 build --experimental_repo_remote_exec
-build --experimental_convenience_symlinks=ignore
+# build --experimental_convenience_symlinks=ignore

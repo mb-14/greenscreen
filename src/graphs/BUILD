@@ -37,3 +37,24 @@ cc_library(
         "//mediapipe/gpu:gl_calculator_helper",
     ],
 )
+
+cc_library(
+    name = "slimnet_segmentation",
+    deps = [
+        "//mediapipe/calculators/core:previous_loopback_calculator",
+        "//mediapipe/calculators/image:recolor_calculator",
+        "//mediapipe/calculators/image:set_alpha_calculator",
+        "//mediapipe/calculators/core:flow_limiter_calculator",
+        "//mediapipe/calculators/image:image_transformation_calculator",
+        "//mediapipe/calculators/tflite:tflite_converter_calculator",
+        "//mediapipe/calculators/tflite:tflite_inference_calculator",
+        "//mediapipe/calculators/tflite:tflite_tensors_to_segmentation_calculator",
+        "//mediapipe/calculators/image:mask_overlay_calculator",
+        "//mediapipe/calculators/image:opencv_encoded_image_to_image_frame_calculator",
+        "//mediapipe/gpu:image_frame_to_gpu_buffer_calculator",
+        "//mediapipe/calculators/core:packet_cloner_calculator",
+        "//mediapipe/calculators/util:local_file_contents_calculator",
+        "//mediapipe/calculators/util:packet_frequency_calculator",
+        "//mediapipe/gpu:gl_calculator_helper",
+    ],
+)
