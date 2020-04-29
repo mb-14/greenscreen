@@ -64,14 +64,6 @@ node {
   output_stream: "PREV_LOOP:previous_human_mask"
 }
 
-# Embeds the hair mask generated from the previous round of hair segmentation
-# as the alpha channel of the current input image.
-node {
-  calculator: "SetAlphaCalculator"
-  input_stream: "IMAGE_GPU:transformed_input_video"
-  input_stream: "ALPHA_GPU:previous_human_mask"
-  output_stream: "IMAGE_GPU:mask_embedded_input_video"
-}
 
 # Converts the transformed input image on GPU into an image tensor stored in
 # tflite::gpu::GlBuffer. The zero_center option is set to false to normalize the
@@ -80,11 +72,12 @@ node {
 # image tensor.
 node {
   calculator: "TfLiteConverterCalculator"
-  input_stream: "IMAGE_GPU:mask_embedded_input_video"
+  input_stream: "IMAGE_GPU:transformed_input_video"
   output_stream: "TENSORS_GPU:image_tensor"
   node_options: {
     [type.googleapis.com/mediapipe.TfLiteConverterCalculatorOptions] {
       zero_center: false
+      max_num_channels: 3
     }
   }
 }
