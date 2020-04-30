@@ -12,7 +12,7 @@ cc_binary(
         "//mediapipe/framework/port:opencv_highgui",
         "//mediapipe/framework/port:opencv_imgproc",
         "//mediapipe/framework/port:opencv_video",
-        "@usr_local//:libv4l2cpp",
+        "@libv4l2cpp",
         "//src/graphs:deeplab_segmentation",
         "//src/graphs:slimnet_segmentation",
         "//mediapipe/gpu:gpu_buffer",

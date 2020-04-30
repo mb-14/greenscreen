@@ -3,6 +3,7 @@ bazel-bin
 bazel-genfiles
 bazel-mediapipe-ioss
 bazel-out
+bazel-greenscreen
 bazel-testlogs
 mediapipe/MediaPipe.xcodeproj
 mediapipe/MediaPipe.tulsiproj/*.tulsiconf-user

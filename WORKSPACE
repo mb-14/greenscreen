@@ -85,6 +85,14 @@ http_archive(
     build_file = "@//third_party:easyexif.BUILD",
 )
 
+# libv4l2cpp
+http_archive(
+    name = "libv4l2cpp",
+    url = "https://github.com/mb-14/libv4l2cpp/archive/master.zip",
+    strip_prefix = "libv4l2cpp-master",
+    build_file = "@//third_party:libv4l2cpp.BUILD",
+)
+
 # libyuv
 http_archive(
     name = "libyuv",
@@ -164,10 +172,4 @@ new_local_repository(
     name = "linux_ffmpeg",
     build_file = "@//third_party:ffmpeg_linux.BUILD",
     path = "/usr"
-)
-
-new_local_repository(
-  name = "usr_local",
-  path = "/usr/local",
-  build_file = "@//third_party:usr_local.BUILD",
 )
