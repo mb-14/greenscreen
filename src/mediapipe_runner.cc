@@ -171,7 +171,7 @@ DEFINE_string(output_device, "/dev/video4", "V4L2 device to which the output wil
         cv::cvtColor(output_frame_mat, output_frame_mat, cv::COLOR_RGB2YUV_I420);
         uchar *buffer = output_frame_mat.isContinuous() ? output_frame_mat.data : output_frame_mat.clone().data;
         uint buffer_size = output_frame_mat.total() * output_frame_mat.channels();
-        size_t nb = video_output->write((char *)buffer, buffer_size);
+        video_output->write((char *)buffer, buffer_size);
         auto postprocessing_time = std::chrono::duration_cast<elapsed_resolution>(clock.now() - postprocessing_being);
         frameCounter++;
         std::time_t timeNow = std::time(0) - timeBegin;
