@@ -85,7 +85,7 @@ DEFINE_string(output_device, "/dev/video4", "V4L2 device to which the output wil
     long frameCounter = 0;
     std::time_t timeBegin = std::time(0);
     int tick = 0;
-    cv::Mat background = cv::imread("backgrounds/settlers_of_catan.jpg");
+    cv::Mat background = cv::imread("backgrounds/this_is_fine.jpg");
     cv::cvtColor(background, background, cv::COLOR_BGR2RGB);
     auto background_frame = absl::make_unique<mediapipe::ImageFrame>(
         mediapipe::ImageFormat::SRGB, background.cols, background.rows,
@@ -105,7 +105,6 @@ DEFINE_string(output_device, "/dev/video4", "V4L2 device to which the output wil
         auto preprocessing_time_begin = clock.now();
         cv::Mat camera_frame;
         cv::cvtColor(camera_frame_raw, camera_frame, cv::COLOR_BGR2RGB);
-
 
         // Wrap Mat into an ImageFrame.
         auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
@@ -167,7 +166,6 @@ DEFINE_string(output_device, "/dev/video4", "V4L2 device to which the output wil
         // Convert back to opencv for display or saving.
         cv::Mat output_frame_mat = mediapipe::formats::MatView(output_frame.get());
         cv::resize(output_frame_mat, output_frame_mat, cv::Size(640, 480));
-        cv::flip(output_frame_mat, output_frame_mat, /*flipcode=HORIZONTAL*/ 1);
         cv::cvtColor(output_frame_mat, output_frame_mat, cv::COLOR_RGB2YUV_I420);
         uchar *buffer = output_frame_mat.isContinuous() ? output_frame_mat.data : output_frame_mat.clone().data;
         uint buffer_size = output_frame_mat.total() * output_frame_mat.channels();
@@ -179,10 +177,6 @@ DEFINE_string(output_device, "/dev/video4", "V4L2 device to which the output wil
         {
             tick++;
             LOG(INFO) << "FPS: " << frameCounter;
-            LOG(INFO) << "Preprocessing: " << preprocessing_time.count();
-            LOG(INFO) << "Graph: " << graph_time.count();
-            LOG(INFO) << "Postprocessing: " << postprocessing_time.count();
-
             frameCounter = 0;
         }
         // Press any key to exit.

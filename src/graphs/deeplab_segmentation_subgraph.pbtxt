@@ -1,19 +1,9 @@
-input_stream: "input_video"
-input_stream: "background_image"
-output_stream: "output_video"
+type: "DeeplabSegmentationSubgraph"
+input_stream: "throttled_input_video"
+output_stream: "human_mask"
+
 
 node {
-  calculator: "FlowLimiterCalculator"
-  input_stream: "input_video"
-  input_stream: "FINISHED:mask"
-  input_stream_info: {
-    tag_index: "FINISHED"
-    back_edge: true
-  }
-  output_stream: "throttled_input_video"
-}
-
-node: {
   calculator: "ImageTransformationCalculator"
   input_stream: "IMAGE_GPU:throttled_input_video"
   output_stream: "IMAGE_GPU:transformed_input_video"
@@ -46,18 +36,5 @@ node {
 node {
   calculator: "DeeplabTensorsToSegmentationCalculator"
   input_stream: "TENSORS_GPU:segmentation_tensor"
-  output_stream: "OUTPUT_GPU:mask"
-}
-
-node {
-  calculator: "MaskOverlayCalculator"
-  input_stream: "VIDEO:1:throttled_input_video"
-  input_stream: "VIDEO:0:background_image"
-  input_stream: "MASK:mask"
-  output_stream: "OUTPUT:output_video"
-  node_options: {
-    [type.googleapis.com/mediapipe.MaskOverlayCalculatorOptions] {
-      mask_channel: ALPHA
-    }
-  }
+  output_stream: "OUTPUT_GPU:human_mask"
 }

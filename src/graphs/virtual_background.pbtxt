@@ -1,0 +1,33 @@
+input_stream: "input_video"
+output_stream: "output_video"
+input_stream: "background_image"
+
+node {
+  calculator: "FlowLimiterCalculator"
+  input_stream: "input_video"
+  input_stream: "FINISHED:human_mask"
+  input_stream_info: {
+    tag_index: "FINISHED"
+    back_edge: true
+  }
+  output_stream: "throttled_input_video"
+}
+
+node {
+    calculator: "SlimnetSegmentationSubgraph"
+    input_stream: "throttled_input_video"
+    output_stream: "human_mask"
+}
+
+node {
+  calculator: "MaskOverlayCalculator"
+  input_stream: "VIDEO:1:throttled_input_video"
+  input_stream: "VIDEO:0:background_image"
+  input_stream: "MASK:human_mask"
+  output_stream: "OUTPUT:output_video"
+  node_options: {
+    [type.googleapis.com/mediapipe.MaskOverlayCalculatorOptions] {
+      mask_channel: ALPHA
+    }
+  }
+}
