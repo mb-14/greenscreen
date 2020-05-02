@@ -1,6 +1,8 @@
 package(default_visibility = ["//visibility:public"])
 
 
+load("//mediapipe/framework/port:build_config.bzl", "mediapipe_cc_proto_library")
+
 cc_library(
     name = "deeplab_tensors_to_segmentation_calculator",
     srcs = ["deeplab_tensors_to_segmentation_calculator.cc"],
@@ -29,6 +31,34 @@ cc_library(
         "@org_tensorflow//tensorflow/lite/delegates/gpu/gl:gl_program",
         "@org_tensorflow//tensorflow/lite/delegates/gpu/gl:gl_shader",
         "@org_tensorflow//tensorflow/lite/delegates/gpu/gl:gl_texture",
+    ],
+    alwayslink = 1,
+)
+
+
+proto_library(
+    name = "demux_calculator_proto",
+    srcs = ["demux_calculator.proto"],
+    visibility = ["//visibility:public"],
+    deps = ["//mediapipe/framework:calculator_proto"],
+)
+
+mediapipe_cc_proto_library(
+    name = "demux_calculator_cc_proto",
+    srcs = ["demux_calculator.proto"],
+    cc_deps = ["//mediapipe/framework:calculator_cc_proto"],
+    visibility = ["//visibility:public"],
+    deps = [":demux_calculator_proto"],
+)
+
+cc_library(
+    name = "demux_calculator",
+    srcs = ["demux_calculator.cc"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":demux_calculator_cc_proto",
+        "//mediapipe/framework:calculator_framework",
+        "//mediapipe/framework/port:ret_check",
     ],
     alwayslink = 1,
 )

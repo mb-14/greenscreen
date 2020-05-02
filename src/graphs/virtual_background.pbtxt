@@ -14,9 +14,37 @@ node {
 }
 
 node {
-    calculator: "SlimnetSegmentationSubgraph"
+    calculator: "DemuxCalculator"
     input_stream: "throttled_input_video"
-    output_stream: "human_mask"
+    output_stream: "OUTPUT:0:throttled_input_video_slimnet"
+    output_stream: "OUTPUT:1:throttled_input_video_deeplab"
+    output_stream: "SELECT:select"
+    node_options: {
+    [type.googleapis.com/mediapipe.DemuxCalculatorOptions] {
+      output_data_stream_index: 0
+    }
+  }
+}
+
+
+node {
+    calculator: "SlimnetSegmentationSubgraph"
+    input_stream: "throttled_input_video_slimnet"
+    output_stream: "human_mask_slimnet"
+}
+
+node {
+    calculator: "DeeplabSegmentationSubgraph"
+    input_stream: "throttled_input_video_deeplab"
+    output_stream: "human_mask_deeplab"
+}
+
+node {
+    calculator: "MuxCalculator"
+    input_stream: "INPUT:0:human_mask_slimnet"
+    input_stream: "INPUT:1:human_mask_deeplab"
+    input_stream: "SELECT:select"
+    output_stream: "OUTPUT:human_mask"
 }
 
 node {

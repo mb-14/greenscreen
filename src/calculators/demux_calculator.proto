@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package mediapipe;
+
+import "mediapipe/framework/calculator.proto";
+
+message DemuxCalculatorOptions {
+  extend mediapipe.CalculatorOptions {
+    optional DemuxCalculatorOptions ext = 30000;
+  }
+
+  optional int32 output_data_stream_index = 1;
+}

@@ -26,7 +26,9 @@ cc_library(
     name = "virtual_background",
     deps = [
         "//mediapipe/calculators/core:flow_limiter_calculator",
+        "//mediapipe/calculators/core:mux_calculator",
         "//mediapipe/calculators/image:mask_overlay_calculator",
+        "//src/calculators:demux_calculator",
         ":deeplab_segmentation_subgraph",
         ":slimnet_segmentation_subgraph"
     ]
